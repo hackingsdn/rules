@@ -1,0 +1,25 @@
+rule GENERIC_PDF_ObfuscatedJavaScriptName{
+
+     meta: 
+
+        copyright = "Fidelis Cybersecurity" 
+
+        description = "Detects PDF files with an obfuscated JavaScript name." 
+
+        source = "https://blog.nviso.be/2017/03/10/developing-complex-suricata-rules-with-lua-part-1/" 
+
+    strings:
+
+        // "/(#4A|J) (#61|a) (#76|v) (#61|a) (#53|S) (#63|c) (#72|r) (#69|i) (#70|p) (#74|t)"
+
+        $name = { 2F (23 34 41 | 4A) (23 36 31 | 61) (23 37 36 | 76) (23 36 31 | 61) (23 35 33 | 53) (23 36 33 | 63) (23 37 32 | 72) (23 36 39 | 69) (23 37 30 | 70) (23 37 34 | 74) } 
+
+        $jsname = "/JavaScript"
+
+    condition: 
+
+        uint32(0) == 0x46445025 and //Check for "%PDF" magic header  
+
+        #name > #jsname //Check if more obfuscated versions exist than the number of un-obfuscated versions
+
+}
